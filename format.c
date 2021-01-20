@@ -28,6 +28,7 @@
 
 #include "kafkacat.h"
 #include "rdendian.h"
+#include <time.h>
 
 static void fmt_add (fmt_type_t type, const char *str, int len) {
         if (conf.fmt_cnt == KC_FMT_MAX_SIZE)
@@ -370,6 +371,21 @@ static int unpack (FILE *fp, const char *what, const char *fmt,
 }
 
 
+void timestamp_as_utc_string(char *dst, int64_t epoch) {
+    time_t seconds = (time_t)(epoch/1000);
+    int milliseconds = epoch % 1000;
+    struct tm ts;
+
+    // Format time, "ddd yyyy-mm-dd hh:mm:ss.xxx zzz", xxx is place for milliseconds
+    ts = *localtime(&seconds);
+    strftime(dst, 64, "%a %Y-%m-%d %H:%M:%S.xxx %Z", &ts);
+
+    char* p;
+    p = strstr(dst, "xxx");
+    char ms[4];
+    sprintf(ms, "%03d", milliseconds);
+    strncpy(p, ms, 3);
+}
 
 
 /**
@@ -511,9 +527,12 @@ static void fmt_msg_output_str (FILE *fp,
                 {
 #if RD_KAFKA_VERSION >= 0x000902ff
                         rd_kafka_timestamp_type_t tstype;
-                        r = fprintf(fp, "%"PRId64,
-                                    rd_kafka_message_timestamp(rkmessage,
-                                                               &tstype));
+                        int64_t epoch = rd_kafka_message_timestamp(rkmessage, &tstype);
+
+                        char buf[80];
+                        timestamp_as_utc_string(buf, epoch);
+
+                        r = fprintf(fp, "%"PRId64" (%s)", epoch, buf);
 #else
                         r = fprintf(fp, "-1");
 #endif
