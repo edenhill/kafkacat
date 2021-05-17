@@ -90,24 +90,30 @@ void fmt_msg_output_json (FILE *fp, const rd_kafka_message_t *rkmessage) {
                 rd_kafka_headers_t *hdrs;
 
                 if (!rd_kafka_message_headers(rkmessage, &hdrs)) {
-                        size_t idx = 0;
                         const char *name;
                         const void *value;
                         size_t size;
 
                         JS_STR(g, "headers");
-                        yajl_gen_array_open(g);
+                        yajl_gen_map_open(g);
 
-                        while (!rd_kafka_header_get_all(hdrs, idx++, &name,
+                        while (!rd_kafka_header_get_all(hdrs, 0, &name,
                                                         &value, &size)) {
                                 JS_STR(g, name);
-                                if (value)
-                                        yajl_gen_string(g, value, size);
-                                else
-                                        yajl_gen_null(g);
+                                size_t idx = 0;
+                                yajl_gen_array_open(g);
+                                while (!rd_kafka_header_get(hdrs, idx++, name,
+                                                            &value, &size)) {
+                                        if (value)
+                                                yajl_gen_string(g, value, size);
+                                        else
+                                                yajl_gen_null(g);
+                                }
+                                yajl_gen_array_close(g);
+                                rd_kafka_header_remove(hdrs, name);
                         }
 
-                        yajl_gen_array_close(g);
+                        yajl_gen_map_close(g);
                 }
         }
 #endif
