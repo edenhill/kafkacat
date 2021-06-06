@@ -1105,6 +1105,7 @@ static void consumer_run (FILE *fp) {
 static void metadata_print (const rd_kafka_metadata_t *metadata,
                             int32_t controllerid) {
         int i, j, k;
+        int total_partition_cnt = 0;
 
         printf("Metadata for %s (from broker %"PRId32": %s):\n",
                conf.topic ? conf.topic : "all topics",
@@ -1138,6 +1139,7 @@ static void metadata_print (const rd_kafka_metadata_t *metadata,
                 for (j = 0 ; j < t->partition_cnt ; j++) {
                         const rd_kafka_metadata_partition_t *p;
                         p = &t->partitions[j];
+                        total_partition_cnt += p->replica_cnt;
                         printf("    partition %"PRId32", "
                                "leader %"PRId32", replicas: ",
                                p->id, p->leader);
@@ -1158,6 +1160,9 @@ static void metadata_print (const rd_kafka_metadata_t *metadata,
                                 printf("\n");
                 }
         }
+        printf(" %i partitions, including replicas, in the cluster\n %i partitions, including replicas, for each broker\n",
+               total_partition_cnt,
+               total_partition_cnt / metadata->broker_cnt);
 }
 
 
