@@ -1,0 +1,31 @@
+Source: kafkacat
+Section: net
+Priority: optional
+Maintainer: Vincent Bernat <bernat@debian.org>
+Uploaders: Faidon Liambotis <paravoid@debian.org>
+Build-Depends: librdkafka-dev (>= 0.9.0),
+               libavro-c-dev,
+               dpkg-dev,
+               pkg-config,
+               zlib1g-dev,
+               libyajl-dev (>= 2)
+Standards-Version: 4.5.0
+Homepage: https://github.com/edenhill/kafkacat
+Vcs-Browser: https://github.com/edenhill/kafkacat/tree/debian
+Vcs-Git: https://github.com/edenhill/kafkacat.git -b debian
+
+Package: kafkacat
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: generic producer and consumer for Apache Kafka
+ kafkacat is a generic non-JVM producer and consumer for Apache Kafka
+ 0.8, think of it as a netcat for Kafka.
+ .
+ In producer mode kafkacat reads messages from stdin, delimited with a
+ configurable delimiter and produces them to the provided Kafka
+ cluster, topic and partition. In consumer mode kafkacat reads messages
+ from a topic and partition and prints them to stdout using the
+ configured message delimiter.
+ .
+ kafkacat also features a Metadata list mode to display the current
+ state of the Kafka cluster and its topics and partitions.
