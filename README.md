@@ -45,7 +45,7 @@ See [Examples](#examples) for usage options, and [Running in Docker](#running-in
 
 ## Install
 
-On recent enough Debian systems:
+### On recent enough Debian systems:
 
 ````
 apt-get install kafkacat
@@ -60,15 +60,24 @@ zypper install kafkacat
 ```
 (see [this page](https://software.opensuse.org/download/package?package=kafkacat&project=network%3Autilities) for instructions to install with openSUSE LEAP)
 
-And on Mac OS X with homebrew installed:
+### On Mac OS X with homebrew installed:
 
 ````
 brew install kafkacat
 ````
 
-See [this blog](https://rmoff.net/2020/04/20/how-to-install-kafkacat-on-fedora/) for how to install kafkacat on recent Fedora systems.
+### On Fedora
 
-Otherwise follow directions below.
+```
+# dnf copr enable bvn13/kafkacat
+# dnf update
+# dnf install kafkacat
+```
+
+See [this blog](https://rmoff.net/2020/04/20/how-to-install-kafkacat-on-fedora/) for how to build from sources and install kafkacat on recent Fedora systems.
+
+
+### Otherwise follow directions below
 
 
 ## Requirements
